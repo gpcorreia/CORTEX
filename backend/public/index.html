@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ecomm · Product Research</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="cortex workspace bg-slate-50 text-slate-900">
+    <div class="cortex-layout">
+      <aside class="cortex-sidebar" data-sidebar></aside>
+      <main class="p-5 md:p-10 min-w-0">
+        <header class="flex flex-wrap justify-between gap-4 items-center">
+          <div>
+            <p
+              class="text-teal-700 font-semibold text-xs uppercase tracking-widest"
+            >
+              Research → Funnel
+            </p>
+            <h1 class="text-3xl font-semibold mt-2">Product Research</h1>
+            <p class="text-slate-500 mt-2">
+              Escolhe um produto aprovado e prepara o teu próximo teste.
+            </p>
+          </div>
+          <button id="refresh" class="secondary">Atualizar spreadsheet</button>
+        </header>
+        <div class="h-6"></div>
+        <p
+          id="notice"
+          role="status"
+          aria-live="polite"
+          class="mb-4 text-sm text-slate-600"
+        ></p>
+        <section
+          class="bg-white rounded-xl border border-slate-200 overflow-hidden"
+        >
+          <div
+            class="p-5 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100"
+          >
+            <div>
+              <h2 class="font-semibold">Produtos da spreadsheet</h2>
+              <p id="count" class="text-xs text-slate-500 mt-1">A carregar…</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <input
+                id="search"
+                type="search"
+                aria-label="Pesquisar produto"
+                placeholder="Pesquisar produto…"
+                class="field"
+              /><select
+                id="filter"
+                aria-label="Filtrar aprovação"
+                class="field"
+              >
+                <option value="all">Todos os produtos</option>
+                <option value="approved">Aprovados pelo coach</option>
+                <option value="pending">Sem aprovação</option>
+              </select>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-50 text-xs text-slate-500">
+                <tr>
+                  <th class="p-4">Produto</th>
+                  <th class="p-4">Coach</th>
+                  <th class="p-4">Testado</th>
+                  <th class="p-4">Referências</th>
+                  <th class="p-4"><span class="sr-only">Ação</span></th>
+                </tr>
+              </thead>
+              <tbody id="products"></tbody>
+            </table>
+          </div>
+          <p id="empty" hidden class="p-10 text-center text-slate-500">
+            Nenhum produto encontrado.
+          </p>
+        </section>
+        <p class="text-xs text-slate-400 mt-4">
+          Ligação de leitura à Google Sheets. A aplicação não altera a
+          spreadsheet.
+        </p>
+      </main>
+    </div>
+    <dialog
+      id="dialog"
+      class="rounded-2xl p-0 w-[min(600px,94vw)] max-h-[92vh] shadow-2xl"
+    >
+      <form id="inputs" class="p-6 md:p-8">
+        <div class="flex justify-between gap-4">
+          <div>
+            <p
+              class="text-teal-700 text-xs font-semibold uppercase tracking-widest"
+            >
+              Sessão 1 · Inputs
+            </p>
+            <h2 id="product-title" class="text-2xl font-semibold mt-2"></h2>
+          </div>
+          <button
+            id="close"
+            type="button"
+            class="text-slate-500 self-start"
+            aria-label="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+        <p class="text-slate-500 text-sm mt-3 mb-6">
+          Prepara os parâmetros. As restantes etapas ainda não serão iniciadas.
+        </p>
+        <fieldset
+          data-competitor
+          class="border border-slate-200 rounded-lg p-4 mb-4"
+        >
+          <legend class="text-sm font-semibold px-1">Concorrente 1</legend>
+          <label class="label" for="advertorial">Link do advertorial</label
+          ><input
+            id="advertorial"
+            required
+            type="url"
+            placeholder="https://…"
+            class="field w-full mb-4"
+          />
+          <label class="label" for="sales">Link da sales page</label
+          ><input
+            id="sales"
+            required
+            type="url"
+            placeholder="https://…"
+            class="field w-full mb-4"
+          />
+        </fieldset>
+        <div id="additional-competitors"></div>
+        <button id="add-competitor" type="button" class="secondary w-full mb-5">
+          + Adicionar concorrente (máximo 3)
+        </button>
+        <p id="photo-requirement" class="text-xs text-slate-500 mb-2">
+          Opcional, sem branding
+        </p>
+        <label class="label" for="image"
+          >Imagem do produto
+          <span class="font-normal text-slate-400">· referência</span></label
+        ><input
+          id="image"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          class="field w-full"
+        />
+        <p class="text-xs text-slate-500 mt-2">
+          PNG, JPEG ou WebP · até 5 MB. Sem fotografia, usamos o produto do
+          concorrente.
+        </p>
+        <div id="image-wrap" hidden class="mt-3">
+          <img
+            id="preview"
+            alt="Referência do produto"
+            class="h-28 w-28 object-contain rounded-lg border border-slate-200"
+          /><button
+            id="remove-image"
+            type="button"
+            class="text-sm text-rose-700 mt-2"
+          >
+            Remover imagem
+          </button>
+        </div>
+        <label class="flex gap-3 items-start bg-slate-50 rounded-lg p-4 my-5"
+          ><input
+            id="branding"
+            type="checkbox"
+            class="mt-1 accent-teal-700"
+          /><span
+            ><strong class="text-sm">Criar uma nova marca</strong
+            ><span class="block text-xs text-slate-500 mt-1"
+              >Desmarcado: manter a marca do produto de referência.</span
+            ></span
+          ></label
+        >
+        <div id="same-product-wrap" hidden class="mb-5">
+          <label class="flex gap-3 items-start rounded-lg border border-slate-200 p-4">
+            <input id="same-product" type="checkbox" class="mt-1 accent-teal-700" />
+            <span><strong class="text-sm">Vou vender o mesmo produto do concorrente</strong>
+              <span class="block text-xs text-slate-500 mt-1">Não precisas de enviar foto. Criamos a marca e preservamos o produto nas imagens. Só editamos a marca visível e o texto que precisar de tradução.</span>
+            </span>
+          </label>
+        </div>
+        <label class="label" for="locale">Idioma e mercado</label>
+        <select id="locale" required class="field w-full mb-4">
+          <option value="nl-NL">Neerlandês — Países Baixos</option>
+          <option value="nl-BE">Neerlandês — Bélgica</option>
+          <option value="en-GB">Inglês — Reino Unido</option>
+          <option value="en-US">Inglês — Estados Unidos</option>
+          <option value="en-CA">Inglês — Canadá</option>
+          <option value="en-AU">Inglês — Austrália</option>
+          <option value="de-DE">Alemão — Alemanha</option>
+          <option value="de-AT">Alemão — Áustria</option>
+          <option value="de-CH">Alemão — Suíça</option>
+          <option value="fr-FR">Francês — França</option>
+          <option value="fr-BE">Francês — Bélgica</option>
+          <option value="fr-CA">Francês — Canadá</option>
+          <option value="es-ES">Espanhol — Espanha</option>
+          <option value="it-IT">Italiano — Itália</option>
+          <option value="pt-PT">Português — Portugal</option>
+          <option value="pt-BR">Português — Brasil</option>
+          <option value="sv-SE">Sueco — Suécia</option>
+          <option value="da-DK">Dinamarquês — Dinamarca</option>
+          <option value="nb-NO">Norueguês — Noruega</option>
+          <option value="fi-FI">Finlandês — Finlândia</option>
+          <option value="pl-PL">Polaco — Polónia</option>
+        </select>
+        <label class="label" for="currency">Moeda</label>
+        <select id="currency" required class="field w-full mb-5">
+          <option value="" disabled>Escolhe a moeda</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — Libra esterlina</option>
+          <option value="USD">USD — Dólar americano</option>
+          <option value="CAD">CAD — Dólar canadiano</option>
+          <option value="AUD">AUD — Dólar australiano</option>
+          <option value="CHF">CHF — Franco suíço</option>
+          <option value="SEK">SEK — Coroa sueca</option>
+          <option value="DKK">DKK — Coroa dinamarquesa</option>
+          <option value="NOK">NOK — Coroa norueguesa</option>
+          <option value="PLN">PLN — Zlóti polaco</option>
+          <option value="BRL">BRL — Real brasileiro</option>
+        </select>
+        <p
+          id="form-status"
+          role="status"
+          aria-live="polite"
+          class="text-sm mb-4"
+        ></p>
+        <button id="save" class="primary w-full" type="submit">
+          Guardar inputs
+        </button>
+        <section
+          id="workflow"
+          hidden
+          class="border-t border-slate-200 mt-6 pt-5"
+        >
+          <p
+            id="workflow-status"
+            role="status"
+            class="text-sm text-slate-500"
+          ></p>
+          <button id="start-workflow" type="button" class="primary w-full mt-4">
+            Start workflow</button
+          ><button id="not-now" type="button" class="secondary w-full mt-3">
+            Agora não
+          </button>
+        </section>
+      </form>
+    </dialog>
+    <script type="module" src="/js/app.js"></script>
+  <script type="module" src="/js/cortex-shell.js"></script></body>
+</html>

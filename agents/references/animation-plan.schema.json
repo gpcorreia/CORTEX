@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mode", "regions", "notes"],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["static_regions", "frame_by_frame", "pending"]
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["left", "top", "width", "height"],
+        "properties": {
+          "left": { "type": "integer" },
+          "top": { "type": "integer" },
+          "width": { "type": "integer" },
+          "height": { "type": "integer" }
+        }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

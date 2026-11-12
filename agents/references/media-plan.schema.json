@@ -1,0 +1,1 @@
+{"type":"object","additionalProperties":false,"required":["plans"],"properties":{"plans":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","action"],"properties":{"path":{"type":"string"},"action":{"type":"string","enum":["keep","translate","replace","both"]}}}}}}

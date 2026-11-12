@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ecomm · Competitors</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="cortex workspace bg-slate-50 text-slate-900">
+    <div class="cortex-layout">
+      <aside class="cortex-sidebar" data-sidebar></aside>
+      <main class="p-5 md:p-10 min-w-0">
+        <header class="flex flex-wrap justify-between gap-4 items-center">
+          <div>
+            <p
+              class="text-teal-700 font-semibold text-xs uppercase tracking-widest"
+            >
+              Product intelligence
+            </p>
+            <h1 class="text-3xl font-semibold mt-2">Competitors</h1>
+            <p class="text-slate-500 mt-2">
+              Os concorrentes da tua pesquisa, sem domínios repetidos.
+            </p>
+          </div>
+          <button id="refresh" class="secondary">Atualizar spreadsheet</button>
+        </header>
+        <p
+          id="notice"
+          role="status"
+          aria-live="polite"
+          class="my-5 text-sm text-slate-600"
+        ></p>
+        <section class="bg-white rounded-xl border border-slate-200 p-5">
+          <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+            <div>
+              <h2 class="font-semibold">Concorrentes</h2>
+              <p id="count" class="text-xs text-slate-500 mt-1"></p>
+            </div>
+            <div class="flex flex-wrap gap-3"><input
+              id="search"
+              type="search"
+              aria-label="Pesquisar domínio"
+              placeholder="Pesquisar domínio…"
+              class="field"
+            /><select id="sort" aria-label="Ordenar concorrentes" class="field"><option value="domain">Domínio · A–Z</option><option value="products">Mais produtos primeiro</option></select></div>
+          </div>
+          <div
+            id="competitors"
+            class="border-t border-slate-200"
+          ></div>
+          <p id="empty" hidden class="text-slate-500 py-8 text-center">
+            Nenhum concorrente encontrado.
+          </p>
+          <nav aria-label="Paginação dos concorrentes" class="flex flex-wrap justify-between items-center gap-3 pt-5 text-xs text-slate-500">
+            <span id="range" role="status" aria-live="polite"></span>
+            <div class="flex items-center gap-3"><span id="page"></span><button id="previous" class="secondary" type="button">Anterior</button><button id="next" class="secondary" type="button">Seguinte</button></div>
+          </nav>
+        </section>
+        <p class="text-xs text-slate-400 mt-4">
+          Inclui todos os produtos da pesquisa, independentemente da aprovação
+          do coach.
+        </p>
+      </main>
+    </div>
+    <script type="module" src="/js/competitors.js"></script>
+  <script type="module" src="/js/cortex-shell.js"></script></body>
+</html>

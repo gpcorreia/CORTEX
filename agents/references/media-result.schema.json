@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "projectSlug", "summary", "limitations", "edits"],
+  "properties": {
+    "status": { "type": "string", "enum": ["completed", "needs_input"] },
+    "projectSlug": { "type": "string" },
+    "summary": { "type": "string" },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "edits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "output", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "output": { "type": ["string", "null"] },
+          "status": { "type": "string", "enum": ["completed", "pending"] }
+        }
+      }
+    }
+  }
+}

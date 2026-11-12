@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Generated product/workflow data and local runtime state
+projects/
+data/
+tmp/
+tests/
+
+# Compiled frontend output (recreated with npm run build)
+backend/public/js/
+backend/public/styles.css
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs, reports and caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+.nyc_output/
+*.tsbuildinfo
+.cache/
+
+# Temporary editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Accidental date-named files created at the workspace root
+/20??-??-??

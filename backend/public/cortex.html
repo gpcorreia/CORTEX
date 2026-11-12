@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cortex VPL Server — The Brain</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="cortex">
+    <div class="cortex-layout">
+      <aside class="cortex-sidebar" data-sidebar></aside>
+      <main class="cortex-main" id="cortex-app">
+        <p role="status" class="empty-state">A carregar o teu workspace…</p>
+      </main>
+    </div>
+    <dialog id="cortex-dialog" aria-labelledby="dialog-title"></dialog>
+    <div id="cortex-toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/js/cortex-shell.js"></script>
+    <script type="module" src="/js/cortex.js"></script>
+  </body>
+</html>

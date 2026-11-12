@@ -1,0 +1,32 @@
+{
+  "name": "ecomm-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "usage:tokens": "node scripts/token-usage.mjs",
+    "build": "tsc --noEmit && tsc -p tsconfig.frontend.json && tailwindcss -i backend/public/styles.input.css -o backend/public/styles.css --minify",
+    "dev": "npm run build && tsx watch backend/server.ts",
+    "start": "tsx backend/server.ts",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "@types/multer": "^2.3.0",
+    "express": "5.3.0",
+    "linkedom": "^0.18.15",
+    "multer": "^2.5.0",
+    "nodemon": "^3.1.14",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.5",
+    "playwright": "1.64.0",
+    "prettier": "^3.9.10",
+    "tailwindcss": "4.3.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}
