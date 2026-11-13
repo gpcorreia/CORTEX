@@ -9,6 +9,7 @@ import { handleCampaignCreation, handleCampaignDeactivation, handleCampaingDaily
 import { getProducts, handleProductCreation } from "../controllers/product.controllers.js";
 import { handleExpenseCreation, handleGetAllExpenses } from "../controllers/expense.controller.js";
 import { handleSignup, handleLogin, handleLogout } from "../controllers/auth.controller.js";
+import { protectAdmin } from "../middlewares/auth.middleware.js";
 
 // settings/provider stay in the signature because createApp supplies the same
 // API-route factory dependencies used by the existing application routes.
@@ -25,6 +26,7 @@ export function apiRoutes(
   router.post("/signup", handleSignup);
   router.post("/login", handleLogin);
   router.post("/logout", handleLogout);
+  router.use(protectAdmin);
 
 
   router.get("/status", controller.getStatus);

@@ -43,4 +43,20 @@ export const env = {
   get adminEmail() {
     return setting("ADMIN_EMAIL").toLowerCase();
   },
+  get appOrigin() {
+    return setting("APP_ORIGIN").replace(/\/$/, "");
+  },
+  get adminCookieName() {
+    return setting("ADMIN_COOKIE_NAME") || "cortex_session";
+  },
+  get adminSessionMaxAgeMs() {
+    const value = Number(setting("ADMIN_SESSION_MAX_AGE_MS") || 604800000);
+    return Number.isFinite(value) && value > 0 ? value : 604800000;
+  },
+  get adminSessionExpiresIn() {
+    return setting("ADMIN_SESSION_EXPIRES_IN") || "7d";
+  },
+  get isProduction() {
+    return setting("NODE_ENV") === "production";
+  },
 };

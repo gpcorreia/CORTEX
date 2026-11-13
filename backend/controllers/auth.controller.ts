@@ -8,14 +8,12 @@ import {
   type NewUser,
 } from "../repositories/auth.repository.js";
 
-const AUTH_COOKIE = "cortex_session";
-const isProduction = process.env.NODE_ENV === "production";
 const cookieOptions = {
   httpOnly: true,
-  secure: isProduction,
+  secure: env.isProduction,
   path: "/",
   sameSite: "strict" as const,
-  maxAge: 24 * 60 * 60 * 1000,
+  maxAge: env.adminSessionMaxAgeMs,
 };
 
 function jwtSecret() {
@@ -84,10 +82,10 @@ export async function handleLogin(req: Request, res: Response) {
       algorithm: "HS256",
       issuer: env.jwtIssuer,
       audience: env.jwtAudience,
-      expiresIn: "1d",
+      expiresIn: env.adminSessionExpiresIn as jwt.SignOptions["expiresIn"],
     },
   );
-  res.cookie(AUTH_COOKIE, token, cookieOptions);
+  res.cookie(env.adminCookieName, token, cookieOptions);
   res.setHeader("Cache-Control", "no-store");
   res.status(200).json({
     authenticated: true,
@@ -101,9 +99,9 @@ export async function handleLogin(req: Request, res: Response) {
 }
 
 export function handleLogout(_req: Request, res: Response) {
-  res.clearCookie(AUTH_COOKIE, {
+  res.clearCookie(env.adminCookieName, {
     httpOnly: true,
-    secure: isProduction,
+    secure: env.isProduction,
     sameSite: "strict",
     path: "/",
   });
