@@ -57,6 +57,29 @@ function locked<T>(file: string, work: () => Promise<T>): Promise<T> {
 }
 const sha = (value: string | Buffer) =>
   createHash("sha256").update(value).digest("hex");
+const targetCountries: Record<string, string> = {
+  "nl-NL": "Netherlands",
+  "nl-BE": "Belgium",
+  "en-GB": "United Kingdom",
+  "en-US": "United States",
+  "en-CA": "Canada",
+  "en-AU": "Australia",
+  "de-DE": "Germany",
+  "de-AT": "Austria",
+  "de-CH": "Switzerland",
+  "fr-FR": "France",
+  "fr-BE": "Belgium",
+  "fr-CA": "Canada",
+  "es-ES": "Spain",
+  "it-IT": "Italy",
+  "pt-PT": "Portugal",
+  "pt-BR": "Brazil",
+  "sv-SE": "Sweden",
+  "da-DK": "Denmark",
+  "nb-NO": "Norway",
+  "fi-FI": "Finland",
+  "pl-PL": "Poland",
+};
 const key = (id: string) => "translation:" + id;
 const statePath = (id: string, paths: JobPaths) => {
   if (!/^[a-f0-9]{24}$/.test(id)) throw Error("Identificador inválido.");
@@ -280,6 +303,7 @@ export async function startTranslation(
           }));
           const values: Record<string, string> = {
             LOCALE: ctx.inputs.locale,
+            COUNTRY: targetCountries[ctx.inputs.locale] ?? ctx.inputs.locale,
             CURRENCY: ctx.inputs.currency,
             BRAND: ctx.brand?.brandName ?? "Manter a marca original",
             RULES: rules,

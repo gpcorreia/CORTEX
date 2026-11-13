@@ -1190,3 +1190,203 @@ th {
   overflow-wrap: anywhere;
 }
 .mini-metrics b{white-space:normal;overflow-wrap:anywhere}.mini-metrics>div{min-width:0}
+
+/* Authentication */
+.auth-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 18% 22%, #7c3aed26, transparent 32rem),
+    radial-gradient(circle at 90% 92%, #bc4df21c, transparent 30rem),
+    #090c16;
+}
+.auth-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(390px, 0.9fr);
+  align-items: center;
+  gap: clamp(40px, 8vw, 130px);
+  width: min(1120px, calc(100% - 64px));
+  margin: auto;
+  padding: 48px 0;
+}
+.auth-intro { max-width: 580px; }
+.auth-brand-mark {
+  width: 74px;
+  height: 74px;
+  display: grid;
+  place-items: center;
+  color: #d585ff;
+  background: linear-gradient(145deg, #261b39, #151422);
+  border: 1px solid #49345f;
+  border-radius: 22px;
+  box-shadow: 0 18px 60px #6b2abc2e;
+  margin-bottom: 28px;
+}
+.auth-brand-mark svg { width: 50px; height: 50px; }
+.auth-eyebrow {
+  color: #c27af0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.auth-intro h1 {
+  font-size: clamp(44px, 6vw, 76px);
+  line-height: .98;
+  letter-spacing: -.055em;
+  margin: 17px 0 24px;
+}
+.auth-intro > p:last-child { color: #a9adc2; font-size: 17px; line-height: 1.7; max-width: 510px; }
+.auth-card {
+  background: linear-gradient(155deg, #171a2bfa, #10121ffa);
+  border: 1px solid #34374d;
+  border-radius: 22px;
+  padding: clamp(28px, 4vw, 46px);
+  box-shadow: 0 30px 90px #0007, inset 0 1px #ffffff08;
+}
+.auth-card h2 { font-size: 30px; margin: 10px 0 8px; letter-spacing: -.03em; }
+.auth-copy, .auth-help { color: #9da1b8; font-size: 13px; line-height: 1.6; }
+.auth-card form { margin-top: 30px; }
+.auth-card label { display: block; color: #d7d8e6; font-size: 12px; font-weight: 700; margin: 18px 0 8px; }
+.auth-card input {
+  width: 100%;
+  height: 50px;
+  padding: 0 15px;
+  border: 1px solid #383c54;
+  border-radius: 11px;
+  background: #0d101c;
+  color: #fff;
+  outline: none;
+}
+.auth-card input:focus { border-color: #a45be0; box-shadow: 0 0 0 3px #9d4edd20; }
+.auth-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(115deg, #7f32c9, #a348db);
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 12px 30px #7424aa40;
+}
+.auth-submit:disabled { opacity: .65; }
+.auth-status { min-height: 22px; margin-top: 13px; color: #b9bcd0; font-size: 12px; }
+.auth-status.is-error { color: #ff8795; }
+.auth-help { border-top: 1px solid #2d3043; margin-top: 26px; padding-top: 20px; }
+.auth-mobile-brand { display: none; }
+
+/* Mobile application navigation */
+.mobile-app-bar, .sidebar-backdrop, .sidebar-close { display: none; }
+.sidebar-heading { display: contents; }
+.sidebar-logout {
+  display: block;
+  color: #bfc1d2;
+  font-size: 11px;
+  margin-top: 14px;
+  padding: 8px 0;
+}
+
+@media (max-width: 800px) {
+  .auth-shell {
+    display: block;
+    width: min(100% - 32px, 460px);
+    padding: max(32px, env(safe-area-inset-top)) 0 max(32px, env(safe-area-inset-bottom));
+  }
+  .auth-intro { display: none; }
+  .auth-card { padding: 27px 22px; margin-top: 5vh; border-radius: 18px; }
+  .auth-card h2 { font-size: 27px; }
+  .auth-mobile-brand { display: block; font-size: 13px; font-weight: 800; letter-spacing: .12em; margin-bottom: 28px; }
+
+  body:not(.auth-page) { padding-top: calc(64px + env(safe-area-inset-top)); }
+  body.sidebar-open { overflow: hidden; }
+  .mobile-app-bar {
+    display: flex;
+    position: fixed;
+    z-index: 90;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(64px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 16px 0;
+    align-items: center;
+    gap: 15px;
+    background: #0e101ced;
+    border-bottom: 1px solid #2b2d40;
+    backdrop-filter: blur(18px);
+  }
+  .mobile-app-bar > a { color: #fff; font-size: 15px; font-weight: 800; letter-spacing: .06em; }
+  .mobile-app-bar small { color: #a1a5bc; font-size: 9px; font-weight: 500; margin-left: 5px; }
+  .mobile-menu-button {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-content: center;
+    gap: 4px;
+    border: 1px solid #34374b;
+    border-radius: 11px;
+    background: #181a29;
+  }
+  .mobile-menu-button span { display: block; width: 18px; height: 2px; border-radius: 2px; background: #ececf4; }
+  .cortex-sidebar {
+    display: flex;
+    position: fixed;
+    z-index: 110;
+    inset: 0 auto 0 0;
+    width: min(84vw, 320px);
+    height: 100dvh;
+    padding: calc(20px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));
+    border-right: 1px solid #383a50;
+    border-bottom: 0;
+    transform: translateX(-104%);
+    transition: transform .25s cubic-bezier(.22,.8,.25,1);
+    box-shadow: 24px 0 70px #0009;
+    overflow-y: auto;
+  }
+  .sidebar-open .cortex-sidebar { transform: translateX(0); }
+  .sidebar-heading { display: flex; align-items: flex-start; border-bottom: 1px solid #2b2d40; }
+  .cortex-brand { flex: 1; border-bottom: 0; padding-bottom: 20px; }
+  .sidebar-close {
+    display: grid;
+    place-content: center;
+    flex: 0 0 42px;
+    height: 42px;
+    color: #e5e6ef;
+    font-size: 25px;
+    border: 1px solid #34374b;
+    border-radius: 11px;
+  }
+  .cortex-sidebar nav { display: block; overflow: visible; padding-top: 5px; }
+  .cortex-sidebar nav p { display: block; }
+  .cortex-sidebar nav a { min-height: 46px; font-size: 14px; padding: 11px 14px; gap: 14px; }
+  .cortex-sidebar nav svg { width: 21px; height: 21px; }
+  .sidebar-footer { display: block; padding-top: 18px; }
+  .sidebar-logout { width: 100%; min-height: 42px; text-align: left; }
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    border: 0;
+    background: #05060bb3;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s, visibility .2s;
+  }
+  .sidebar-open .sidebar-backdrop { opacity: 1; visibility: visible; }
+  .cortex-main, .workspace main { padding: 20px 16px 40px; }
+  .page-header { gap: 14px; }
+  .page-header h1 { font-size: 26px; }
+  .header-actions > *, .workspace header button { min-height: 44px; }
+  .date-range { width: 100%; overflow-x: auto; }
+  dialog { max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); }
+}
+
+@media (max-width: 430px) {
+  .kpi-grid, .campaign-detail .six { grid-template-columns: 1fr 1fr; }
+  .kpi { min-height: 88px; align-items: flex-start; }
+  .campaign-card { min-width: min(82vw, 280px); }
+  .auth-card { margin-top: 2vh; }
+}

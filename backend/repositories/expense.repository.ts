@@ -1,4 +1,4 @@
-import { getSupabase } from "../configs/supabase.js";
+import { supabase } from "../configs/supabase.js";
 
 export type ExpenseInput = {
   name: string;
@@ -12,7 +12,7 @@ export type ExpenseInput = {
 };
 
 export async function createExpense(expense: ExpenseInput) {
-  const { data, error } = await getSupabase()
+  const { data, error } = await supabase
     .from("ec_expenses")
     .insert(expense)
     .select()
@@ -28,7 +28,7 @@ export async function createExpense(expense: ExpenseInput) {
 }
 
 export async function getAllExpenses(): Promise<ExpenseInput[]> {
-  const { data, error } = await getSupabase()
+  const { data, error } = await supabase
     .from("ec_expenses")
     .select("*");
 
