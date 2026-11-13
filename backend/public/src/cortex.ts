@@ -60,7 +60,15 @@ const card = (title: string, body: string, extra = "") =>
   `<section class="panel ${extra}"><h2>${title}</h2>${body}</section>`;
 const table = (headers: string[], rows: string[]) =>
   rows.length
-    ? `<div class="table-scroll"><table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`
+    ? `<div class="table-scroll"><table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows
+        .map((entry) => {
+          let cell = 0;
+          return entry.replace(
+            /<td>/g,
+            () => `<td data-label="${esc(headers[cell++] ?? "")}">`,
+          );
+        })
+        .join("")}</tbody></table></div>`
     : '<p class="empty-state">Sem registos neste período.</p>';
 const row = (...cells: string[]) =>
   `<tr>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
@@ -127,10 +135,14 @@ function header() {
     : page === "expenses"
       ? button("new-expense", "+ Nova Despesa", "accent")
       : "";
-  return `<header class="page-header"><div><h1>${title}</h1><p>${page === "dashboard" ? "Visão global do teu e-commerce" : page === "campaigns" ? "Gere as tuas campanhas, acompanha resultados e analisa as encomendas." : "Controla os custos e as subscrições do teu negócio."}</p></div><div class="header-actions"><div class="date-range"><label>De <input type="date" id="date-from" value="${from}" aria-label="Data inicial"></label><label>Até <input type="date" id="date-to" value="${to}" aria-label="Data final"></label></div>${button("refresh", "Atualizar")}${createActions}</div></header><div class="demo-note"><span class="online-dot"></span> ${data.source ? `Supabase · Dados reais em leitura <span>· Atualizado ${new Date(data.loadedAt!).toLocaleTimeString("pt-PT")} · Shopify ${data.shopify?.configured ? "configurado" : "por configurar"}</span>` : "Modo demonstração <span>· Dados fictícios · Alterações guardadas nesta sessão do navegador</span>"}</div>`;
+  const filters = page === "dashboard" ? "" : periodControls() + button("refresh", "Atualizar");
+  return `<header class="page-header"><div><span class="page-kicker">Cortex intelligence</span><h1>${title}</h1><p>${page === "dashboard" ? "Visão global do teu e-commerce" : page === "campaigns" ? "Gere as tuas campanhas, acompanha resultados e analisa as encomendas." : "Controla os custos e as subscrições do teu negócio."}</p></div>${filters || createActions ? `<div class="header-actions">${filters}${createActions}</div>` : ""}</header><div class="demo-note"><span class="online-dot"></span> ${data.source ? `Supabase · Dados reais em leitura <span>· Atualizado ${new Date(data.loadedAt!).toLocaleTimeString("pt-PT")} · Shopify ${data.shopify?.configured ? "configurado" : "por configurar"}</span>` : "Modo demonstração <span>· Dados fictícios · Alterações guardadas nesta sessão do navegador</span>"}</div>`;
+}
+function periodControls(compact = false) {
+  return `<div class="date-range ${compact ? "compact" : ""}"><label><span>De</span><input type="date" id="date-from" value="${from}" aria-label="Data inicial"></label><span class="date-arrow">→</span><label><span>Até</span><input type="date" id="date-to" value="${to}" aria-label="Data final"></label></div>`;
 }
 function campaignRows() {
-  return data.campaigns.map((c) => {
+  return data.campaigns.slice(0, 5).map((c) => {
     const t = totals(c, from, to);
     return row(
       `<a class="product-link" href="/campaigns/${c.id}${demoQuery()}">${thumb(c)}<b>${esc(c.product)}</b></a>`,
@@ -195,7 +207,8 @@ function dashboard() {
     investment = t.spend + t.cogs + expenses,
     net = t.profit - expenses,
     progress = investment ? Math.min(100, (t.revenue / investment) * 100) : 0;
-  return `${kpis(t)}<div class="overview-grid">${card("Evolução do Profit Acumulado", chart(data.campaigns))}${card("Break-even do Negócio · estimativa", t.incomplete ? '<p class="empty-state">Break-even por confirmar: faltam valores no histórico. Consulta os avisos abaixo.</p>' : `<dl class="summary"><div><dt>Investimento (Ads + COGS + despesas)</dt><dd>${money(investment)}</dd></div><div><dt>Despesas operacionais no período</dt><dd>${money(expenses)}</dd></div><div><dt>Profit líquido</dt><dd>${profit(net)}</dd></div><div><dt>Falta recuperar</dt><dd>${money(Math.max(0, -net))}</dd></div></dl><div class="progress-row"><progress max="100" value="${progress}"></progress><b>${progress.toFixed(1)}%</b></div><div class="callout"><b>${net >= 0 ? "Break-even atingido" : "A recuperar investimento"}</b><p>${net >= 0 ? "A receita cobre todos os custos do período." : `Faltam ${money(-net)} para atingir o break-even.`}</p></div>`)}</div>${card(`Campanhas Recentes ${data.readOnly ? '<a class="button" href="/campaigns">Ver campanhas</a>' : '<a class="accent button" href="/campaigns?demo=1&new=1">+ Nova Campanha</a>'}`, table(["Produto / Campanha", "Início", "Status", "Ad Spend", "Revenue", "COGS", "Profit", "ROAS", "Decisão 3 dias"], campaignRows()))}`;
+  const chartTools = `<div class="chart-tools">${periodControls(true)}${button("refresh", "Atualizar", "chart-refresh")}</div>`;
+  return `${kpis(t)}<div class="overview-grid">${card(`Profit acumulado ${chartTools}`, chart(data.campaigns), "chart-panel")}${card("Break-even do negócio", t.incomplete ? '<p class="empty-state">Break-even por confirmar: faltam valores no histórico. Consulta os avisos abaixo.</p>' : `<dl class="summary"><div><dt>Investimento total</dt><dd>${money(investment)}</dd></div><div><dt>Despesas operacionais</dt><dd>${money(expenses)}</dd></div><div><dt>Profit líquido</dt><dd>${profit(net)}</dd></div><div><dt>Falta recuperar</dt><dd>${money(Math.max(0, -net))}</dd></div></dl><div class="progress-row"><progress max="100" value="${progress}"></progress><b>${progress.toFixed(1)}%</b></div><div class="callout"><b>${net >= 0 ? "Break-even atingido" : "A recuperar investimento"}</b><p>${net >= 0 ? "A receita cobre todos os custos do período." : `Faltam ${money(-net)} para atingir o break-even.`}</p></div>`, "break-even-panel")}</div>${card(`Campanhas recentes ${data.readOnly ? '<a class="button" href="/campaigns">Ver campanhas</a>' : '<a class="accent button" href="/campaigns?demo=1&new=1">+ Nova campanha</a>'}`, table(["Produto / Campanha", "Início", "Status", "Ad Spend", "Revenue", "COGS", "Profit", "ROAS", "Decisão 3 dias"], campaignRows()), "data-panel campaigns-table")}`;
 }
 function orderTable(c: Campaign, compact = false) {
   const orders = c.orders.filter((o) => o.date >= from && o.date <= to);
@@ -268,18 +281,20 @@ function campaignDetail(c: Campaign) {
   const t = totals(c, from, to);
   let body = "";
   if (tab === "overview")
-    body = `${reviewCard(c)}${kpis(t, true)}<div class="overview-grid">${card("Evolução Diária", chart([c], false))}${card("Resumo da Campanha", `<dl class="summary"><div><dt>Encomendas</dt><dd>${t.orders}</dd></div><div><dt>Unidades vendidas</dt><dd>${t.units ?? "Não disponível no histórico"}</dd></div><div><dt>Ticket médio (AOV)</dt><dd>${t.orders && !t.incomplete ? money(t.revenue / t.orders) : "—"}</dd></div><div><dt>Custo por encomenda (CPA)</dt><dd>${t.orders ? money(t.spend / t.orders) : "—"}</dd></div><div><dt>Margem bruta</dt><dd class="positive">${t.incomplete ? "—" : t.revenue ? (((t.revenue - t.cogs) / t.revenue) * 100).toFixed(1) : "0"}%</dd></div><div><dt>BER</dt><dd>${t.incomplete ? "Por confirmar" : ratio(t.ber)}</dd></div></dl>`)}</div>${card("Profit Acumulado", chart([c]))}${card("Resultados Diários", dailyTable(c))}${card(`Últimas Encomendas ${button("orders", "Ver todas →", "text-button")}`, orderTable(c, true))}`;
+    body = `${reviewCard(c)}${kpis(t, true)}<div class="overview-grid">${card("Evolução diária", chart([c], false), "chart-panel")}${card("Resumo da campanha", `<dl class="summary"><div><dt>Encomendas</dt><dd>${t.orders}</dd></div><div><dt>Unidades vendidas</dt><dd>${t.units ?? "Não disponível no histórico"}</dd></div><div><dt>Ticket médio (AOV)</dt><dd>${t.orders && !t.incomplete ? money(t.revenue / t.orders) : "—"}</dd></div><div><dt>Custo por encomenda (CPA)</dt><dd>${t.orders ? money(t.spend / t.orders) : "—"}</dd></div><div><dt>Margem bruta</dt><dd class="positive">${t.incomplete ? "—" : t.revenue ? (((t.revenue - t.cogs) / t.revenue) * 100).toFixed(1) : "0"}%</dd></div><div><dt>BER</dt><dd>${t.incomplete ? "Por confirmar" : ratio(t.ber)}</dd></div></dl>`)}</div>${card("Profit acumulado", chart([c]), "chart-panel")}${card("Resultados diários", dailyTable(c), "data-panel daily-table")}${card(`Últimas encomendas ${button("orders", "Ver todas →", "text-button")}`, orderTable(c, true), "data-panel orders-table")}`;
   if (tab === "orders")
     body = card(
       data.source
         ? "Encomendas registadas na Supabase"
         : 'Encomendas Shopify <span class="muted">Demonstração</span>',
       `<p class="section-note">O COGS inclui produto, transporte e outros custos. Usa “Importar orders Shopify” para carregar o período e atribuir as encomendas às campanhas antes de fechar o dia.</p>${orderTable(c)}`,
+      "data-panel orders-table",
     );
   if (tab === "daily")
     body = card(
       `Resultados Diários ${button("add-spend", "+ Registar dia")}`,
       `<p class="section-note">KEEP/KILL usa os últimos 3 Daily Stats disponíveis; o dia atual é excluído. ROAS agregado = soma da receita ÷ soma de Ads. SCALE aguarda definição.</p>${dailyTable(c, true)}`,
+      "data-panel daily-table",
     );
   if (tab === "budget")
     body = card(
@@ -402,6 +417,7 @@ function expenses() {
         ),
       ),
     ),
+    "data-panel expenses-table",
   )}`;
 }
 function render() {
