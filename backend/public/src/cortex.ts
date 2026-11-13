@@ -310,10 +310,7 @@ function campaignDetail(c: Campaign) {
         ),
       )}`,
     );
-  const campaignAction = c.status === "Active"
-    ? button("deactivate-campaign", "Desativar", "danger")
-    : "";
-  return `<div class="campaign-detail"><section class="panel campaign-heading"><div class="product-link">${thumb(c)}<div><h2>${esc(c.product)} ${badge(c.status)}</h2><p>Início: ${date(c.start)} ${esc(c.start.slice(0, 4))}　|　Loja: ${esc(c.store)}</p><small class="muted">${esc(c.name)}</small></div></div><div class="actions">${button("add-spend", "Registar Daily Status", "accent")}${campaignAction}</div></section><div class="tabs" role="tablist" aria-label="Detalhes da campanha">${[
+  return `<div class="campaign-detail"><div class="tabs" role="tablist" aria-label="Detalhes da campanha">${[
     ["overview", "Visão Geral"],
     ["orders", "Orders (Encomendas)"],
     ["daily", "Resultados Diários"],
@@ -359,14 +356,18 @@ function campaigns() {
       ? visible
           .map((c) => {
             const t = totals(c, from, to);
-            return `<button class="campaign-card ${selected === c.id ? "selected" : ""}" data-action="select" data-id="${c.id}" aria-pressed="${selected === c.id}"><div class="product-link">${thumb(c)}<div><b>${esc(c.product)}</b><small>Início: ${date(c.start)}</small></div>${badge(c.status)}</div><div class="mini-metrics">${[
+            const isSelected = selected === c.id;
+            const selectedMenu = isSelected
+              ? `<details class="campaign-card-menu"><summary aria-label="Ações de ${esc(c.product)}" title="Ações">···</summary><div class="campaign-card-menu-popover">${button("add-spend", "Registar Daily Status", "", c.id)}${c.status === "Active" ? button("deactivate-campaign", "Desativar", "danger", c.id) : ""}</div></details>`
+              : "";
+            return `<article class="campaign-card ${isSelected ? "selected" : ""}"><button class="campaign-card-select" data-action="select" data-id="${c.id}" aria-pressed="${isSelected}"><div class="product-link">${thumb(c)}<div><b>${esc(c.product)}</b><small>Início: ${date(c.start)}</small></div>${badge(c.status)}</div><div class="mini-metrics">${[
               ["Spend", money(t.spend)],
               ["Revenue", t.incomplete ? "Por confirmar" : money(t.revenue)],
               ["Profit", t.incomplete ? "Por confirmar" : profit(t.profit)],
               ["ROAS", t.incomplete ? "Por confirmar" : ratio(t.roas)],
             ]
               .map(([k, v]) => `<div><small>${k}</small><b>${v}</b></div>`)
-              .join("")}</div></button>`;
+              .join("")}</div></button>${selectedMenu}</article>`;
           })
           .join("")
       : '<p class="empty-state">Nenhuma campanha encontrada. Ajusta os filtros ou cria uma campanha.</p>'
@@ -801,6 +802,35 @@ function expenseForm(e?: Expense) {
   select.onchange = toggle;
   toggle();
 }
+document.addEventListener("click", (event) => {
+  const target = event.target as Node;
+  document
+    .querySelectorAll<HTMLDetailsElement>(".campaign-card-menu[open]")
+    .forEach((menu) => {
+      if (!menu.contains(target)) menu.removeAttribute("open");
+    });
+});
+document.addEventListener(
+  "toggle",
+  (event) => {
+    const menu = event.target as HTMLDetailsElement;
+    if (!menu.matches(".campaign-card-menu")) return;
+    const popover = menu.querySelector<HTMLElement>(
+      ".campaign-card-menu-popover",
+    );
+    if (!popover) return;
+    if (!menu.open) {
+      popover.style.visibility = "hidden";
+      return;
+    }
+    const trigger = menu.querySelector("summary")!.getBoundingClientRect();
+    const width = popover.offsetWidth;
+    popover.style.left = `${Math.max(8, Math.min(trigger.right - width, window.innerWidth - width - 8))}px`;
+    popover.style.top = `${trigger.bottom + 8}px`;
+    popover.style.visibility = "visible";
+  },
+  true,
+);
 root.addEventListener("click", async (e) => {
   const el = (e.target as HTMLElement).closest<HTMLElement>(
     "[data-action],[data-tab]",

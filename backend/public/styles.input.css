@@ -706,6 +706,7 @@ th {
   margin-bottom: 12px;
 }
 .campaign-card {
+  position: relative;
   width: 100%;
   text-align: left;
   margin-bottom: 12px;
@@ -713,6 +714,64 @@ th {
   background: linear-gradient(120deg, #1b2030, #171a2a) !important;
   border-radius: 11px !important;
 }
+.campaign-card-select {
+  width: 100%;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: left;
+}
+.campaign-card.selected .badge {
+  align-self: flex-start;
+  margin-top: 0;
+}
+.campaign-card-menu {
+  position: absolute;
+  z-index: 20;
+  top: 37px;
+  right: 19px;
+}
+.campaign-card-menu summary {
+  width: 22px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+  color: #8e93a8;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  list-style: none;
+}
+.campaign-card-menu summary::-webkit-details-marker { display: none; }
+.campaign-card-menu summary:hover,
+.campaign-card-menu[open] summary { color: #d8dbea; background: #272b3d; }
+.campaign-card-menu-popover {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 190px;
+  padding: 6px;
+  border: 1px solid #41465e;
+  border-radius: 10px;
+  background: #1a1e2d;
+  box-shadow: 0 16px 45px #000b;
+  visibility: hidden;
+}
+.campaign-card-menu-popover button {
+  width: 100%;
+  padding: 10px !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: left;
+  white-space: nowrap;
+}
+.campaign-card-menu-popover button:hover { background: #292e42 !important; }
+.campaign-card-menu-popover .danger { color: #ff8794; }
 .campaign-card.selected {
   border-color: #b263ff;
   box-shadow:
@@ -1587,6 +1646,7 @@ th {
   .campaign-heading { padding: 15px; }
   .campaign-heading .actions { width: 100%; }
   .campaign-heading .actions button { flex: 1; min-height: 43px; }
+  .campaign-card-menu-popover { width: min(210px, 72vw); }
   .tabs { scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
 }

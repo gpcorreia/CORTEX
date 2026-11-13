@@ -2,7 +2,7 @@
 
 Node.js + TypeScript + Express, frontend TypeScript e Tailwind. Sem React. O Workspace continua a usar os ficheiros locais existentes.
 
-O acesso visual está disponível em `/login`. Não existe página pública de registo; a primeira conta é criada por `POST /api/signup`, e a sessão é iniciada por `POST /api/login`. Configurar `JWT_SECRET`, `JWT_ISSUER`, `JWT_AUDIENCE` e `ADMIN_EMAIL` no `.env`.
+O acesso visual está disponível em `/login`. Não existe página pública de registo; a primeira conta é criada por `POST /api/signup`, e a sessão é iniciada por `POST /api/login`. Páginas e APIs privadas exigem uma sessão admin válida durante sete dias; pedidos sem sessão são redirecionados para o login ou recebem `401`. Configurar `JWT_SECRET`, `JWT_ISSUER`, `JWT_AUDIENCE`, `ADMIN_EMAIL` e `APP_ORIGIN` no `.env`.
 
 Iniciar com npm run dev e abrir http://127.0.0.1:1000 (ou a porta indicada no terminal). npm run build recompila o frontend e o Tailwind.
 

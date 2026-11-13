@@ -23,7 +23,12 @@ form?.addEventListener("submit", async (event) => {
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.error || "Não foi possível iniciar sessão.");
-    location.assign("/dashboard");
+    const requested = new URLSearchParams(location.search).get("next");
+    const destination =
+      requested?.startsWith("/") && !requested.startsWith("//")
+        ? requested
+        : "/dashboard";
+    location.assign(destination);
   } catch (error) {
     if (status) {
       status.textContent = (error as Error).message;
