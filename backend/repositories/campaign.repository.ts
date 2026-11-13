@@ -1,4 +1,4 @@
-import { getSupabase } from "../configs/supabase.js";
+import { supabase } from "../configs/supabase.js";
 
 type Campaign = {
     id: string;
@@ -22,7 +22,6 @@ export type CampaignForOrderAssignment = Pick<
 type CampaignInput = Omit<Campaign, "id">;
 
 export async function createCampaign(campaign: CampaignInput): Promise<Campaign> {
-    const supabase = getSupabase();
 
     const { productId, ...payload } = campaign;
 
@@ -51,7 +50,6 @@ export async function createCampaign(campaign: CampaignInput): Promise<Campaign>
 
 
 export async function getCampaign(campaignId: string): Promise<Campaign | null> {
-    const supabase = getSupabase();
 
     const { data, error } = await supabase
         .from("ec_campaigns")
@@ -68,7 +66,7 @@ export async function getCampaign(campaignId: string): Promise<Campaign | null> 
 }
 
 export async function deactivateCampaign(campaignId: string): Promise<Campaign | null> {
-    const supabase = getSupabase();
+
     const { data, error } = await supabase
         .from("ec_campaigns")
         .update({
@@ -84,7 +82,7 @@ export async function deactivateCampaign(campaignId: string): Promise<Campaign |
 }
 
 export async function getCampaignsForOrderAssignment(): Promise<CampaignForOrderAssignment[]> {
-    const supabase = getSupabase();
+
     const { data, error } = await supabase
         .from("ec_campaigns")
         .select("id, product_id, started_on, ended_on, status");
@@ -99,7 +97,6 @@ export async function getCampaignsForOrderAssignment(): Promise<CampaignForOrder
 
 
 export async function insertDailyStatus(campaignId: string, date: string, daily: any): Promise<any> {
-    const supabase = getSupabase();
 
     const {data, error } = await supabase
         .from("ec_campaign_daily_stats")
@@ -123,7 +120,7 @@ export async function insertDailyStatus(campaignId: string, date: string, daily:
 
 
 export async function getCampaignHistory(campaignId: string, started_on: string, date: string): Promise<any[]> {
-    const supabase = getSupabase();
+
     const { data, error } = await supabase
         .from("ec_campaign_daily_stats")
         .select("*")
@@ -141,8 +138,6 @@ export async function getCampaignHistory(campaignId: string, started_on: string,
 }
 
 export async function getAllInfoCampaigns() {
-
-    const supabase = getSupabase();
 
     const { data, error } = await supabase.from("ec_campaigns").select("ads_spend_eur.sum(), revenue_eur.sum(), cogs_eur.sum(), profit_eur.sum()");
 

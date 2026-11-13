@@ -1,4 +1,4 @@
-import { getSupabase } from "../configs/supabase.js";
+import { supabase } from "../configs/supabase.js";
 
 type CommerceRows = {
   campaigns: Record<string, unknown>[];
@@ -19,7 +19,6 @@ function resultRows(
 }
 
 export async function getCommerceRows(): Promise<CommerceRows> {
-  const supabase = getSupabase();
   const [campaigns, products, orders, dailyStats, stores, expenses] =
     await Promise.all([
       supabase.from("ec_campaigns").select("*"),

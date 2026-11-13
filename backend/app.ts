@@ -1,10 +1,10 @@
 ﻿import express from "express";
 import { config } from "./config.js";
 import { loadResearch, type Product } from "./services/research.js";
-import { apiRoutes } from "./routes/apiRoutes.js";
-import { pageRoutes } from "./routes/pageRoutes.js";
-import { workflowRoutes } from "./routes/workflowRoutes.js";
-import { monitorRoutes } from "./routes/monitorRoutes.js";
+import { apiRoutes } from "./routes/api.routes.js";
+import { pageRoutes } from "./routes/page.routes.js";
+import { workflowRoutes } from "./routes/workflow.routes.js";
+import { monitorRoutes } from "./routes/monitor.routes.js";
 
 export function createApp(
   settings = config,

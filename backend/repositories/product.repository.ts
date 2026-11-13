@@ -1,4 +1,4 @@
-import { getSupabase } from "../configs/supabase.js";
+import { supabase } from "../configs/supabase.js";
 
 type Product = {
   id: string;
@@ -38,7 +38,6 @@ export async function createProduct(
   product: Pick<Product, "name" | "sku" | "shopify_product_id" | "supplier_url" | "unit_cost_eur" | "default_shipping_eur" | "status">,
   image?: Express.Multer.File
 ): Promise<Product> {
-  const supabase = getSupabase();
 
   const { data: store, error: storeError } = await supabase
     .from("ec_stores")
@@ -74,7 +73,7 @@ export async function createProduct(
 
 
 export async function getAllProducts(): Promise<Product[]> {
-  const supabase = getSupabase();
+
   const { data, error } = await supabase.from("ec_products").select("*");
   if (error) {
     throw new Error(`Erro ao buscar produtos: ${error.message}`);
@@ -84,7 +83,7 @@ export async function getAllProducts(): Promise<Product[]> {
 
 
 export async function getProductShopifyId(productId: string): Promise<string | null> {
-  const supabase = getSupabase();
+
   const { data, error } = await supabase
     .from("ec_products")
     .select("shopify_product_id")
@@ -100,7 +99,7 @@ export async function getProductShopifyId(productId: string): Promise<string | n
 export async function getProductById(
   productId: string,
 ): Promise<ProductCost | null> {
-  const supabase = getSupabase();
+
   const { data, error } = await supabase
     .from("ec_products")
     .select("product_id, unit_cost_eur, default_shipping_eur")
@@ -117,7 +116,6 @@ export async function getProductsByShopifyIds(
   const ids = [...new Set(shopifyProductIds.filter(Boolean))];
   if (!ids.length) return [];
 
-  const supabase = getSupabase();
   const { data, error } = await supabase
     .from("ec_products")
     .select("id, store_id, shopify_product_id, unit_cost_eur, default_shipping_eur")
@@ -133,7 +131,6 @@ export async function getProductsCostsByIds(
   const ids = [...new Set(productIds.filter(Boolean))];
   if (!ids.length) return [];
 
-  const supabase = getSupabase();
   const { data, error } = await supabase
     .from("ec_products")
     .select("id, unit_cost_eur, default_shipping_eur")

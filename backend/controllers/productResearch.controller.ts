@@ -8,7 +8,7 @@ import { isBrandBusy } from "../services/branding.js";
 type ControllerRequest = Request<any>;
 const WORKFLOW_ID = /^[a-f0-9]{24}$/;
 
-export class ApiController {
+export class ProductResearchController {
   private readonly startedAt = new Date().toISOString();
 
   constructor(private readonly settings: typeof config, private readonly products: () => Promise<Product[]>) {}

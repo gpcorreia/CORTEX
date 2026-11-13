@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>CORTEX · Entrar</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/CORTEX-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/CORTEX-180.png" />
+    <meta name="theme-color" content="#0D0B16" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CORTEX" />
+  </head>
+  <body class="cortex auth-page">
+    <main class="auth-shell">
+      <section class="auth-intro" aria-label="CORTEX">
+        <div class="auth-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M24 9c-6-9-15-1-12 5-9 0-10 13-5 16-3 9 9 15 17 9V9Zm0 0c6-9 15-1 12 5 9 0 10 13 5 16 3 9-9 15-17 9"/><path d="M16 12v8l-5 4m5 10 3-6m13-16v8l5 4m-5 10-3-6M24 18h-5m5 15h5"/></svg>
+        </div>
+        <p class="auth-eyebrow">CORTEX · THE BRAIN</p>
+        <h1>O teu centro de operações.</h1>
+        <p>Campanhas, produtos, despesas e workflows num único espaço de decisão.</p>
+      </section>
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="auth-mobile-brand"><span class="online-dot"></span>CORTEX</div>
+        <p class="auth-eyebrow">Acesso reservado</p>
+        <h2 id="login-title">Bem-vindo de volta</h2>
+        <p class="auth-copy">Entra com a conta criada através da API.</p>
+        <form id="login-form">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="username" required placeholder="nome@empresa.com" />
+          <label for="password">Palavra-passe</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8" placeholder="••••••••" />
+          <p id="login-status" class="auth-status" role="status" aria-live="polite"></p>
+          <button class="auth-submit" type="submit">Entrar na CORTEX</button>
+        </form>
+        <p class="auth-help">Ainda não existe registo público. A criação de contas é feita pelo endpoint administrativo.</p>
+      </section>
+    </main>
+    <script type="module" src="/js/login.js"></script>
+  </body>
+</html>

@@ -31,4 +31,16 @@ export const env = {
   get shopifyVersion() {
     return setting("SHOPIFY_API_VERSION") || "2026-10";
   },
+  get jwtSecret() {
+    return setting("JWT_SECRET");
+  },
+  get jwtIssuer() {
+    return setting("JWT_ISSUER") || "cortex";
+  },
+  get jwtAudience() {
+    return setting("JWT_AUDIENCE") || "cortex-web";
+  },
+  get adminEmail() {
+    return setting("ADMIN_EMAIL").toLowerCase();
+  },
 };

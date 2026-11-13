@@ -1,6 +1,8 @@
 ﻿# Ecomm — Workflows
 
-Node.js + TypeScript + Express, frontend TypeScript e Tailwind. Sem React ou login. O Workspace continua a usar os ficheiros locais existentes.
+Node.js + TypeScript + Express, frontend TypeScript e Tailwind. Sem React. O Workspace continua a usar os ficheiros locais existentes.
+
+O acesso visual está disponível em `/login`. Não existe página pública de registo; a primeira conta é criada por `POST /api/signup`, e a sessão é iniciada por `POST /api/login`. Configurar `JWT_SECRET`, `JWT_ISSUER`, `JWT_AUDIENCE` e `ADMIN_EMAIL` no `.env`.
 
 Iniciar com npm run dev e abrir http://127.0.0.1:1000 (ou a porta indicada no terminal). npm run build recompila o frontend e o Tailwind.
 
@@ -47,7 +49,8 @@ Downloads em paralelo; tarefas de IA numa fila única para controlar recursos. C
 ## Onde alterar
 
 - backend/app.ts: segurança, middleware e montagem das rotas.
-- backend/routes/apiRoutes.ts: research, inputs e status.
+- backend/controllers/productResearch.controller.ts: research, inputs e status.
+- backend/routes/api.routes.ts: autenticação, research, inputs e operações de comércio.
 - backend/routes/workflowRoutes.ts: recolha e compatibilidade com o fluxo anterior.
 - backend/routes/monitorRoutes.ts: monitor e ações das sessões.
 - backend/services/mediaJobs.ts e mediaCollector.ts: downloads.

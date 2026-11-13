@@ -1,4 +1,4 @@
-import { getSupabase } from "../configs/supabase.js";
+import { supabase } from "../configs/supabase.js";
 
 
 export async function getOrdersByCampaign(campaignId: string,productId: string, date: string): Promise<any[]> {
@@ -6,7 +6,6 @@ export async function getOrdersByCampaign(campaignId: string,productId: string, 
     const nextDayStart = new Date(dayStart);
     nextDayStart.setUTCDate(nextDayStart.getUTCDate() + 1);
 
-    const supabase = getSupabase();
     const { data, error } = await supabase
         .from("ec_orders")
         .select("*")
@@ -23,7 +22,7 @@ export async function getOrdersByCampaign(campaignId: string,productId: string, 
 
 
 export async function insertOrders(orders: any[]): Promise<any[]> {
-    const supabase = getSupabase();
+
     const { data, error } = await supabase
         .from("ec_orders")
         .insert(orders)
@@ -37,7 +36,7 @@ export async function insertOrders(orders: any[]): Promise<any[]> {
 }
 
 export async function getAllInfoDashboardFromDatabase(): Promise<any[]> {
-    const supabase = getSupabase();
+
     const { data, error } = await supabase
         .from("ec_orders")
         .select("campaign_id, product_id, revenue_eur, ordered_at , ec_campaigns(id,cogs_eur,revenue_eur,profit_eur)");
