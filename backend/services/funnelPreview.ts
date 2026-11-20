@@ -1,16 +1,24 @@
 import { parseHTML } from "linkedom";
 import { createHash } from "node:crypto";
 import path from "node:path";
-import type { PageCapture, TextBlock } from "./funnelCapture.js";
+import {
+  stripTransientUi,
+  type PageCapture,
+  type TextBlock,
+} from "./funnelCapture.js";
+
+function blockElement(document: Document, block: TextBlock) {
+  return document.querySelector(
+    `[${block.kind === "html" ? "data-funnel-block" : "data-funnel-" + block.attribute}="${block.id}"]`,
+  );
+}
 
 export function applyBlock(
   document: Document,
   block: TextBlock,
   translated: string,
 ) {
-  const element = document.querySelector(
-    `[${block.kind === "html" ? "data-funnel-block" : "data-funnel-" + block.attribute}="${block.id}"]`,
-  );
+  const element = blockElement(document, block);
   if (!element) throw Error("Bloco de texto em falta: " + block.id);
   if (block.kind === "attribute") {
     element.setAttribute(block.attribute!, translated);
@@ -64,14 +72,16 @@ export function renderPreview(
   const { document } = parseHTML(
     `<!doctype html><html><head></head>${capture.html}</html>`,
   );
+  // Also clean legacy captures so an existing translation does not need to
+  // be repeated just because its source contained transient shop UI.
+  stripTransientUi(document);
   for (const block of capture.blocks) {
+    if (!blockElement(document, block)) continue;
     if (translations[block.id] === undefined)
       throw Error("Tradução em falta: " + block.id);
     applyBlock(document, block, translations[block.id]);
     if (block.role) {
-      const element = document.querySelector(
-        `[${block.kind === "html" ? "data-funnel-block" : "data-funnel-" + block.attribute}="${block.id}"]`,
-      );
+      const element = blockElement(document, block);
       element?.setAttribute("data-funnel-role", block.role);
     }
   }
@@ -100,6 +110,13 @@ export function renderPreview(
   style.textContent = `${capture.css}
 @media(max-width:767px){
   [data-funnel-role="usp"]{white-space:nowrap}
+}
+html,body,body *{
+  -webkit-user-select:text!important;
+  user-select:text!important;
+}
+[data-funnel-media],[data-funnel-background]{
+  pointer-events:none!important;
 }`;
   document.head.appendChild(style);
   return "<!doctype html>\n" + document.documentElement.outerHTML;

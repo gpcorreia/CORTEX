@@ -363,6 +363,33 @@ th {
   gap: 8px;
   flex-wrap: wrap;
 }
+.header-actions {
+  justify-content: flex-end;
+}
+.header-utility-actions,
+.header-create-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-create-actions {
+  padding: 5px;
+  border: 1px solid #2c3145;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #171b2a, #111522);
+  box-shadow: inset 0 1px #ffffff08;
+}
+.header-create-actions button {
+  min-height: 40px;
+  white-space: nowrap;
+}
+.header-refresh {
+  color: #b8bdd0 !important;
+  background: transparent !important;
+}
+.header-action-secondary {
+  background: #191e2e !important;
+}
 .date-range {
   display: flex;
   gap: 12px;
@@ -1536,6 +1563,10 @@ th {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px;
+  }
+  .header-utility-actions,
+  .header-create-actions {
+    display: contents;
   }
   .header-actions .date-range { grid-column: 1 / -1; width: 100%; }
   .header-actions > button { width: 100%; min-width: 0; white-space: normal; }

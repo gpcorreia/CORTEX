@@ -167,6 +167,39 @@ const inline = new Set([
   "SUB",
   "BR",
 ]);
+
+// Temporary shop interfaces are not part of the page being reconstructed.
+// Keep normal calls to action, but remove drawers, consent UI and overlays.
+export const transientUiSelector = [
+  'input[type="hidden"]',
+  '[id*="onetrust" i]',
+  '[id*="cookiebot" i]',
+  '#shopify-pc__banner',
+  '[id^="shopify-pc__"]',
+  '[class*="shopify-pc__"]',
+  '[class*="cookie-banner" i]',
+  '[class*="cookie-consent" i]',
+  '[class*="consent-banner" i]',
+  '[class*="newsletter-popup" i]',
+  'cart-drawer',
+  'cart-notification',
+  'kaching-cart',
+  'kaching-cart-drawer',
+  '[id*="cart-drawer" i]',
+  '[class*="cart-drawer" i]',
+  '[role="dialog"][aria-label*="cart" i]',
+  '[role="dialog"][aria-label*="cookie" i]',
+  '.lai-popup-container',
+  '[class*="popup-overlay" i]',
+  '[class*="popup-container" i]',
+].join(",");
+
+export function stripTransientUi(document: Document) {
+  document
+    .querySelectorAll(transientUiSelector)
+    .forEach((element) => element.remove());
+}
+
 export function sanitizeCapture(
   desktop: Awaited<ReturnType<typeof captureViewport>>,
   mobile?: Awaited<ReturnType<typeof captureViewport>>,
@@ -192,11 +225,7 @@ export function sanitizeCapture(
       "script,style,link,meta,base,template,noscript,iframe,object,embed,canvas,video,audio,source",
     )
     .forEach((n) => n.remove());
-  document
-    .querySelectorAll(
-      'input[type="hidden"], [id*="onetrust" i], [id*="cookiebot" i], [class*="cookie-banner" i], [class*="cookie-consent" i], [class*="consent-banner" i], [class*="newsletter-popup" i]',
-    )
-    .forEach((n) => n.remove());
+  stripTransientUi(document);
   for (const element of Array.from(document.querySelectorAll("*"))) {
     for (const attribute of Array.from(element.attributes)) {
       const name = attribute.name.toLowerCase();

@@ -10,8 +10,8 @@ const sha = (value: string) =>
   createHash("sha256").update(value).digest("hex");
 
 /**
- * Translation requires valid inputs, an approved download and both captured
- * pages. Brand & Media is deliberately optional: a chosen name may guide text
+ * Translation requires valid inputs, an approved download and every supplied
+ * page. Brand & Media is deliberately optional: a chosen name may guide text
  * substitution, but unfinished image generation never blocks translation.
  */
 export async function buildTranslationContext(id: string, paths: JobPaths) {
@@ -28,10 +28,15 @@ export async function buildTranslationContext(id: string, paths: JobPaths) {
     const expected = inputs.competitors[page.competitor - 1][
       page.page === "advertorial" ? "advertorialUrl" : "salesPageUrl"
     ];
+    if (!expected) return false;
     return (page.capture.requestedUrl ?? page.capture.url).split("#")[0] ===
       expected.split("#")[0];
   }).map((page) => ({ ...page, capture: classifyTextBlocks(page.capture) }));
-  if (pages.length !== inputs.competitors.length * 2)
+  const expectedPages = inputs.competitors.reduce(
+    (total, competitor) => total + 1 + Number(Boolean(competitor.advertorialUrl)),
+    0,
+  );
+  if (pages.length !== expectedPages)
     throw Error(
       "Falta a estrutura de uma ou mais páginas. Usa Recolher estrutura em falta (sem IA).",
     );

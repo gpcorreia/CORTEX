@@ -131,12 +131,12 @@ function header() {
         ? "Campanhas"
         : "Despesas";
   const createActions = page === "campaigns"
-    ? `${button("import-orders", "Importar orders Shopify")}${button("new-product", "+ Novo Produto")}${button("new-campaign", "+ Nova Campanha", "accent")}`
+    ? `${button("import-orders", "Importar orders Shopify", "header-action-secondary")}${button("new-product", "+ Novo Produto", "header-action-secondary")}${button("new-campaign", "+ Nova Campanha", "accent")}`
     : page === "expenses"
       ? button("new-expense", "+ Nova Despesa", "accent")
       : "";
-  const filters = page === "dashboard" ? "" : periodControls() + button("refresh", "Atualizar");
-  return `<header class="page-header"><div><span class="page-kicker">Cortex intelligence</span><h1>${title}</h1><p>${page === "dashboard" ? "Visão global do teu e-commerce" : page === "campaigns" ? "Gere as tuas campanhas, acompanha resultados e analisa as encomendas." : "Controla os custos e as subscrições do teu negócio."}</p></div>${filters || createActions ? `<div class="header-actions">${filters}${createActions}</div>` : ""}</header><div class="demo-note"><span class="online-dot"></span> ${data.source ? `Supabase · Dados reais em leitura <span>· Atualizado ${new Date(data.loadedAt!).toLocaleTimeString("pt-PT")} · Shopify ${data.shopify?.configured ? "configurado" : "por configurar"}</span>` : "Modo demonstração <span>· Dados fictícios · Alterações guardadas nesta sessão do navegador</span>"}</div>`;
+  const refresh = page === "dashboard" ? "" : button("refresh", "Atualizar", "header-refresh");
+  return `<header class="page-header"><div><span class="page-kicker">Cortex intelligence</span><h1>${title}</h1><p>${page === "dashboard" ? "Visão global do teu e-commerce" : page === "campaigns" ? "Gere as tuas campanhas, acompanha resultados e analisa as encomendas." : "Controla os custos e as subscrições do teu negócio."}</p></div>${refresh || createActions ? `<div class="header-actions">${refresh ? `<div class="header-utility-actions">${refresh}</div>` : ""}${createActions ? `<div class="header-create-actions">${createActions}</div>` : ""}</div>` : ""}</header><div class="demo-note"><span class="online-dot"></span> ${data.source ? `Supabase · Dados reais em leitura <span>· Atualizado ${new Date(data.loadedAt!).toLocaleTimeString("pt-PT")} · Shopify ${data.shopify?.configured ? "configurado" : "por configurar"}</span>` : "Modo demonstração <span>· Dados fictícios · Alterações guardadas nesta sessão do navegador</span>"}</div>`;
 }
 function periodControls(compact = false) {
   return `<div class="date-range ${compact ? "compact" : ""}"><label><span>De</span><input type="date" id="date-from" value="${from}" aria-label="Data inicial"></label><span class="date-arrow">→</span><label><span>Até</span><input type="date" id="date-to" value="${to}" aria-label="Data final"></label></div>`;
@@ -374,7 +374,7 @@ function campaigns() {
   }</div></section>${c ? campaignDetail(c) : card("As tuas campanhas", '<p class="empty-state">Sem campanha selecionada ou campanha não encontrada. Escolhe uma campanha da lista.</p>')}</div>`;
 }
 function expenses() {
-  const filtered = data.expenses.filter((e) => e.date >= from && e.date <= to);
+  const filtered = data.expenses;
   const monthly = data.expenses
       .filter(
         (e) =>
@@ -384,7 +384,7 @@ function expenses() {
     one = filtered
       .filter((e) => e.type === "One-time")
       .reduce((s, e) => s + e.amount, 0);
-  return `<div class="expense-summary">${card("Subscrições · equivalente mensal", `<div class="budget-value">${money(monthly)}</div><p class="muted">Todas as subscrições; valores anuais divididos por 12.</p>`)}${card("Investimento pontual", `<div class="budget-value">${money(one)}</div><p class="muted">Despesas únicas no período selecionado.</p>`)}${card("Total no período", `<div class="budget-value">${money(filtered.reduce((s, e) => s + e.amount, 0))}</div><p class="muted">Registos com data dentro do filtro.</p>`)}</div>${card(
+  return `<div class="expense-summary">${card("Subscrições · equivalente mensal", `<div class="budget-value">${money(monthly)}</div><p class="muted">Todas as subscrições; valores anuais divididos por 12.</p>`)}${card("Investimento pontual acumulado", `<div class="budget-value">${money(one)}</div><p class="muted">Todas as despesas pontuais registadas.</p>`)}${card("Total acumulado", `<div class="budget-value">${money(filtered.reduce((s, e) => s + e.amount, 0))}</div><p class="muted">Todas as despesas registadas até hoje.</p>`)}</div>${card(
     "Despesas e Subscrições",
     table(
       [

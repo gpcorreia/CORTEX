@@ -16,7 +16,7 @@ interface Inputs {
   currency: string;
 }
 interface CompetitorInput {
-  advertorialUrl: string;
+  advertorialUrl: string | null;
   salesPageUrl: string;
 }
 const el = <T extends HTMLElement>(id: string) =>
@@ -34,7 +34,10 @@ function competitorValues(): CompetitorInput[] {
     ...form.querySelectorAll<HTMLFieldSetElement>("[data-competitor]"),
   ].map((group) => {
     const fields = group.querySelectorAll<HTMLInputElement>("input");
-    return { advertorialUrl: fields[0].value, salesPageUrl: fields[1].value };
+    return {
+      advertorialUrl: fields[0].value.trim() || null,
+      salesPageUrl: fields[1].value,
+    };
   });
 }
 function markDirty() {
@@ -42,7 +45,7 @@ function markDirty() {
   el<HTMLButtonElement>("start-workflow").disabled = true;
 }
 function renderCompetitors(values: CompetitorInput[]) {
-  el<HTMLInputElement>("advertorial").value = values[0].advertorialUrl;
+  el<HTMLInputElement>("advertorial").value = values[0].advertorialUrl ?? "";
   el<HTMLInputElement>("sales").value = values[0].salesPageUrl;
   const container = el("additional-competitors");
   container.replaceChildren();
@@ -55,14 +58,14 @@ function renderCompetitors(values: CompetitorInput[]) {
     legend.textContent = `Concorrente ${i + 2}`;
     group.append(legend);
     for (const [key, label] of [
-      ["advertorialUrl", "Link do advertorial"],
+      ["advertorialUrl", "Link do advertorial (opcional)"],
       ["salesPageUrl", "Link da sales page"],
     ] as const) {
       const input = document.createElement("input");
       input.id = `${key}-${i + 2}`;
       input.type = "url";
-      input.required = true;
-      input.value = value[key];
+      input.required = key === "salesPageUrl";
+      input.value = value[key] ?? "";
       input.placeholder = "https://…";
       input.className = "field w-full mb-4";
       const title = document.createElement("label");
@@ -141,7 +144,14 @@ function render() {
   const shown = products.filter(
     (p) =>
       p.name.toLowerCase().includes(search) &&
-      (filter === "all" || (filter === "approved" ? p.approved : !p.approved)),
+      (filter === "all" ||
+        (filter === "approved-untested"
+          ? p.approved && !p.tested
+          : filter === "approved"
+            ? p.approved
+            : filter === "tested"
+              ? p.tested
+              : !p.approved)),
   );
   const body = el("products");
   body.replaceChildren();
@@ -239,7 +249,7 @@ async function openProduct(p: Product) {
   dialog.showModal();
   try {
     const status = await api("/api/status");
-    if (status.inputSchema !== 4)
+    if (status.inputSchema !== 5)
       throw new Error(
         "O servidor está desatualizado. Não foram guardados inputs.",
       );

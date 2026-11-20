@@ -363,7 +363,7 @@ async function prepareBrandInternal(
     throw Error("Os parâmetros mudaram. Pede novas opções de marca.");
   if (!selection.length)
     throw Error(
-      "Coloca as imagens escolhidas em advertorial/generator e content/generator antes de validar.",
+      "Coloca as imagens escolhidas nas pastas generator aplicáveis antes de validar.",
     );
   const state: BrandState = {
     productId: id,
@@ -902,7 +902,7 @@ async function renderPrompt(
   }));
   const instructions: Record<string, string> = {
     names: "Suggest exactly three distinct, single-word brand names: one product adaptation and two creative related names. Do not create files or images.",
-    branding: "Create the chosen transparent SVG logo at LOGO_TARGET. The logo must contain a compact, professional symbol clearly related to PRODUCT_CONTEXT, positioned immediately before or visually integrated behind the start of the wordmark; a plain text-only wordmark is invalid. Write the exact brand name followed immediately by ™, with no other wording. Then create one transparent product master at MASTER_TARGET from REFERENCE, preserving the exact product and professionally replacing only the visible original branding with that exact symbol plus wordmark logo. The symbol, wordmark and ™ on the master must match LOGO_TARGET. Do not edit generator media, create bundles, suggest names, validate results, wait for approval, or request fields other than the stated Data.",
+    branding: "Create the chosen transparent SVG logo at LOGO_TARGET as one clean, premium wordmark in a single coherent typeface. Use one compact professional symbol clearly related to PRODUCT_CONTEXT and integrate it into the wordmark where suitable, such as a refined letter detail, or position it immediately beside the wordmark. The symbol must read as part of the brand, never as an oversized or detached illustration, and the result must remain balanced and legible at small sizes. Write the exact brand name and place ™ tightly against the upper-right edge of the final letter: its left edge must be no more than 0.08em from the final visible glyph, optically attached to the wordmark rather than floating as a separate element, and proportionally small but legible. Include no other wording. Crop the SVG viewBox tightly around the complete symbol, wordmark and ™ with small visually equal padding on every side; never leave a large transparent tail after moving or resizing an element, and center the complete logo inside that final canvas. Then create one transparent product master at MASTER_TARGET from REFERENCE, preserving the exact product and professionally replacing only the visible original branding with that exact final SVG logo. The symbol, wordmark, typeface, proportions and exact tight ™ placement on the master must match LOGO_TARGET. Do not edit generator media, create bundles, suggest names, validate results, wait for approval, or request fields other than the stated Data.",
     batch: "Edit the complete supplied EDITS selection in this single operation. Use LOGO and MASTER as the approved visual references. Apply the exact BRAND_NAME only where branding belongs, follow PRODUCT_POLICY, translate visible source-language text to LOCALE using the Translation reference, and preserve product facts, composition, dimensions, transparency and animation-frame consistency. Return keep only when an image genuinely needs no branding or text change; otherwise return an actual generated output path for every edit. Do not approve, retry, create bundles, change workflow state, or communicate with the user.",
     adaptation: "Edit only the supplied EDITS. Use LOGO and MASTER as visual references when needed; never create a new logo, master or bundle. Preserve dimensions, transparency, product facts and animation properties. Return an actual generated output path for each completed edit.",
   };
@@ -1227,14 +1227,15 @@ export function normalizeBrandName(value: unknown) {
     .normalize("NFC")
     .trim()
     .replace(/(?:\s*™)+$/u, "")
-    .trim();
+    .trim()
+    .replace(/\s+/gu, " ");
   if (
     name.length < 2 ||
     name.length > 40 ||
-    !/^\p{L}[\p{L}\p{M}\p{N}]*$/u.test(name)
+    !/^\p{L}[\p{L}\p{M}\p{N}]*(?: \p{L}[\p{L}\p{M}\p{N}]*)?$/u.test(name)
   )
     throw Error(
-      "Usa um nome de uma só palavra, com 2 a 40 letras ou números. O símbolo ™ é acrescentado automaticamente.",
+      "Usa um nome de uma ou duas palavras, com 2 a 40 letras ou números. O símbolo ™ é acrescentado automaticamente.",
     );
   return name;
 }

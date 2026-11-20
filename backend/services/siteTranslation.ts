@@ -142,6 +142,7 @@ export async function collectMissingFunnel(
           competitor[
             page === "advertorial" ? "advertorialUrl" : "salesPageUrl"
           ];
+        if (!url) continue;
         if (
           known.some(
             (p) =>
@@ -263,7 +264,10 @@ export async function startTranslation(
       status: "queued",
       fingerprint: ctx.fingerprint,
       message: "Tradução na fila. Só os textos novos serão enviados à IA.",
-      notes: previous?.fingerprint === ctx.fingerprint ? previous.notes : [],
+      notes:
+        previous?.fingerprint === ctx.fingerprint && previous.status !== "failed"
+          ? previous.notes
+          : [],
       pages: [],
       assets: {},
       uniqueBlocks: unique.size,
@@ -338,12 +342,6 @@ export async function startTranslation(
             !Array.isArray(response.result.issues)
           )
             throw Error("Resposta de tradução inválida.");
-          const issues = response.result.issues as {
-            id: string;
-            message: string;
-            blocking: boolean;
-          }[];
-          state.notes.push(...issues.map((i) => i.message));
           let invalid = false;
           for (const [i, [k, block]] of batch.entries()) {
             const found = response.result.translations.filter(
@@ -352,8 +350,7 @@ export async function startTranslation(
             if (
               found.length !== 1 ||
               typeof found[0].text !== "string" ||
-              !found[0].text.trim() ||
-              issues.some((issue) => issue.blocking && issue.id === "t" + i)
+              !found[0].text.trim()
             ) {
               invalid = true;
               continue;
@@ -369,9 +366,9 @@ export async function startTranslation(
           }
           await writeFile(cacheFile, JSON.stringify(cache, null, 2));
           await save(state, paths);
-          if (invalid || issues.some((i) => i.blocking))
+          if (invalid)
             throw Error(
-              "Há blocos incompletos ou questões por resolver. A retoma conserva as traduções válidas.",
+              "Há blocos incompletos ou com estrutura inválida. A retoma conserva as traduções válidas.",
             );
         }
         if (

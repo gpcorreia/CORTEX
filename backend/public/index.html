@@ -61,8 +61,10 @@
                 aria-label="Filtrar aprovação"
                 class="field"
               >
+                <option value="approved-untested">Aprovados · não testados</option>
                 <option value="all">Todos os produtos</option>
                 <option value="approved">Aprovados pelo coach</option>
+                <option value="tested">Já testados</option>
                 <option value="pending">Sem aprovação</option>
               </select>
             </div>
@@ -122,10 +124,11 @@
           class="border border-slate-200 rounded-lg p-4 mb-4"
         >
           <legend class="text-sm font-semibold px-1">Concorrente 1</legend>
-          <label class="label" for="advertorial">Link do advertorial</label
+          <label class="label" for="advertorial"
+            >Link do advertorial
+            <span class="font-normal text-slate-400">· opcional</span></label
           ><input
             id="advertorial"
-            required
             type="url"
             placeholder="https://…"
             class="field w-full mb-4"
