@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 export interface CompetitorInput {
-  advertorialUrl: string;
+  advertorialUrl: string | null;
   salesPageUrl: string;
 }
 export interface Inputs {
@@ -29,6 +29,10 @@ export function validateInputs(value: unknown): Inputs {
       throw new Error("Usa links HTTP ou HTTPS sem credenciais.");
     return u.href;
   };
+  const optionalLink = (value: unknown) => {
+    if (value === null || value === undefined || value === "") return null;
+    return link(value);
+  };
   // Older saved inputs had a single pair at the top level.
   const raw =
     v.competitors === undefined
@@ -40,7 +44,7 @@ export function validateInputs(value: unknown): Inputs {
     if (!item || typeof item !== "object")
       throw new Error("Concorrente inválido.");
     return {
-      advertorialUrl: link(item.advertorialUrl),
+      advertorialUrl: optionalLink(item.advertorialUrl),
       salesPageUrl: link(item.salesPageUrl),
     };
   });

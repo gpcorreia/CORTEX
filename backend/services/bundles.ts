@@ -59,25 +59,58 @@ export async function createBundles(
           canvas.height = 1200;
           const ctx = canvas.getContext("2d")!;
           ctx.clearRect(0, 0, 1200, 1200);
-          const columns = count === 1 ? 1 : count === 2 ? 2 : Math.min(3, count),
-            rows = Math.ceil(count / columns),
-            gridWidth = count === 2 ? 760 : columns === 2 ? 780 : 900,
-            cellW = gridWidth / columns,
-            gridTop = count <= 2 ? 120 : 100,
-            gridHeight = count <= 2 ? 960 : 940,
-            cellH = gridHeight / rows;
-          for (let i = 0; i < count; i++) {
-            const row = Math.floor(i / columns),
-              inRow = Math.min(columns, count - row * columns),
-              col = i % columns;
-            const scale = Math.min(
-              (count === 2 ? 440 : cellW * 0.96) / (right - left + 1),
-              (cellH * 0.82) / (bottom - top + 1),
-            );
-            const w = (right - left + 1) * scale,
-              h = (bottom - top + 1) * scale,
-              x = (1200 - inRow * cellW) / 2 + col * cellW + (cellW - w) / 2,
-              y = gridTop + row * cellH + (cellH - h) / 2;
+          const sourceWidth = right - left + 1,
+            sourceHeight = bottom - top + 1;
+          type Placement = { centerX: number; y: number; height: number };
+          let placements: Placement[];
+          if (count === 1) {
+            placements = [{ centerX: 600, y: 105, height: 990 }];
+          } else if (count === 2) {
+            placements = [
+              { centerX: 440, y: 150, height: 900 },
+              { centerX: 760, y: 150, height: 900 },
+            ];
+          } else if (count === 3) {
+            // Compact frontal triangle: two units behind and one dominant unit in front.
+            placements = [
+              { centerX: 390, y: 125, height: 825 },
+              { centerX: 810, y: 125, height: 825 },
+              { centerX: 600, y: 235, height: 925 },
+            ];
+          } else if (count === 5) {
+            // Tight layered pyramid instead of a spaced two-row grid.
+            placements = [
+              { centerX: 400, y: 70, height: 710 },
+              { centerX: 800, y: 70, height: 710 },
+              { centerX: 420, y: 245, height: 770 },
+              { centerX: 780, y: 245, height: 770 },
+              { centerX: 600, y: 345, height: 820 },
+            ];
+          } else {
+            const backCount = Math.ceil(count / 2),
+              frontCount = count - backCount,
+              backSpacing = Math.min(235, 760 / Math.max(1, backCount - 1)),
+              frontSpacing = Math.min(250, 650 / Math.max(1, frontCount - 1));
+            placements = [];
+            for (let i = 0; i < backCount; i++)
+              placements.push({
+                centerX: 600 + (i - (backCount - 1) / 2) * backSpacing,
+                y: 95,
+                height: count <= 6 ? 720 : 650,
+              });
+            for (let i = 0; i < frontCount; i++)
+              placements.push({
+                centerX: 600 + (i - (frontCount - 1) / 2) * frontSpacing,
+                y: count <= 6 ? 330 : 365,
+                height: count <= 6 ? 790 : 720,
+              });
+          }
+          for (const placement of placements) {
+            const scale = placement.height / sourceHeight;
+            const w = sourceWidth * scale,
+              h = sourceHeight * scale,
+              x = placement.centerX - w / 2,
+              y = placement.y;
             ctx.save();
             ctx.shadowColor = "rgba(0,0,0,.12)";
             ctx.shadowBlur = 14;

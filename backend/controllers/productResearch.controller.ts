@@ -14,7 +14,7 @@ export class ProductResearchController {
   constructor(private readonly settings: typeof config, private readonly products: () => Promise<Product[]>) {}
 
   getStatus = (_req: ControllerRequest, res: Response) => {
-    res.json({ app: "ecomm-workspace", inputSchema: 4, maxCompetitors: 3, mediaMode: "download-review-only", pid: process.pid, startedAt: this.startedAt, dataDir: this.settings.dataDir, publicDir: this.settings.publicDir, inputFields: ["competitors", "productImage", "createBrand", "sameProduct", "locale", "currency"] });
+    res.json({ app: "ecomm-workspace", inputSchema: 5, maxCompetitors: 3, mediaMode: "download-review-only", pid: process.pid, startedAt: this.startedAt, dataDir: this.settings.dataDir, publicDir: this.settings.publicDir, inputFields: ["competitors", "productImage", "createBrand", "sameProduct", "locale", "currency"] });
   };
 
   getResearch = async (_req: ControllerRequest, res: Response, next: NextFunction) => {

@@ -20,6 +20,7 @@ function campaignForOrder(
       campaign.productId === order.product_id &&
       campaign.status === "active" &&
       campaign.started_on <= orderDate &&
+      campaign.status === "active" &&
       (!campaign.ended_on || campaign.ended_on >= orderDate),
   );
   return matches.length === 1 ? matches[0] : null;

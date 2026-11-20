@@ -224,7 +224,7 @@ export async function startDownload(
         }
         await writeFile(
           path.join(job.projectPath, "product.md"),
-          `# ${name}\n\nLocale: ${inputs.locale}\nCurrency: ${inputs.currency}\nNew brand requested: ${inputs.createBrand}\n${inputs.competitors.map((c, i) => `Competitor ${i + 1}:\nAdvertorial: ${c.advertorialUrl}\nSales page: ${c.salesPageUrl}`).join("\n\n")}\n\nOriginal media only. Awaiting manual review. No AI execution.\n`,
+          `# ${name}\n\nLocale: ${inputs.locale}\nCurrency: ${inputs.currency}\nNew brand requested: ${inputs.createBrand}\n${inputs.competitors.map((c, i) => `Competitor ${i + 1}:\nAdvertorial: ${c.advertorialUrl ?? "Not supplied"}\nSales page: ${c.salesPageUrl}`).join("\n\n")}\n\nOriginal media only. Awaiting manual review. No AI execution.\n`,
         );
         if (inputs.productImage) {
           const ext = inputs.productImage.startsWith("data:image/png")
@@ -242,6 +242,7 @@ export async function startDownload(
             ["advertorial", competitor.advertorialUrl],
             ["content", competitor.salesPageUrl],
           ] as const) {
+            if (!url) continue;
             job.summary = `Concorrente ${index + 1}/${inputs.competitors.length} · ${role === "content" ? "Sales Page" : "Advertorial"}`;
             await persistJob(job, paths);
             try {

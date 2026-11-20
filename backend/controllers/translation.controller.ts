@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 import { readFile } from "node:fs/promises";
+import { parseHTML } from "linkedom";
 import {
   approveTranslation,
   collectMissingFunnel,
@@ -8,6 +9,7 @@ import {
 } from "../services/siteTranslation.js";
 import { workflowView } from "../services/workflowMonitor.js";
 import { localProjectFile } from "../services/funnelPreview.js";
+import { stripTransientUi } from "../services/funnelCapture.js";
 
 const action =
   (task: (id: string) => Promise<unknown>, status = 200): RequestHandler<any> =>
@@ -43,16 +45,24 @@ export function createTranslationController() {
           throw Error("Pré-visualização indisponível.");
         res.setHeader(
           "Content-Security-Policy",
-          "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'; sandbox",
+          "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'; sandbox allow-same-origin",
         );
         res.setHeader("X-Content-Type-Options", "nosniff");
+        const savedHtml = await readFile(
+          localProjectFile(view.projectPath, page.output),
+          "utf8",
+        );
+        const parsed = parseHTML(savedHtml).document;
+        stripTransientUi(parsed);
+        const html = "<!doctype html>\n" + parsed.documentElement.outerHTML;
+        const selectionStyle =
+          '<style id="cortex-copy-support">html,body,body *{-webkit-user-select:text!important;user-select:text!important}[data-funnel-media],[data-funnel-background]{pointer-events:none!important}</style>';
         res
           .type("html")
           .send(
-            await readFile(
-              localProjectFile(view.projectPath, page.output),
-              "utf8",
-            ),
+            html.includes("</head>")
+              ? html.replace("</head>", selectionStyle + "</head>")
+              : selectionStyle + html,
           );
       } catch {
         res.status(404).json({ error: "Pré-visualização indisponível." });
